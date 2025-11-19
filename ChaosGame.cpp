@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 //Make the code easier to type with "using namespace"
 using namespace sf;
@@ -18,6 +20,22 @@ int main()
 	
 	vector<Vector2f> vertices;
 	vector<Vector2f> points;
+
+	srand(time(0));
+
+	Font font;
+
+	if (!font.loadFromFile("batman.ttf"))
+
+	{
+		cout << "Error, couldn't open font file" << endl;
+	}
+
+	Text text;
+	text.setFont(font);
+	text.setString("click 3 points to place triangle vertices. After that, click on 1 starting point to make the triangle.");
+	text.setCharacterSize(24);
+	text.setFillColor(Color::White);
 
 	while (window.isOpen())
 	{
@@ -44,12 +62,13 @@ int main()
 	
 			    if(vertices.size() < 3)
 			    {
-				vertices.push_back(Vector2f(event.mouseButton.x, event.mouseButton.y));
+					vertices.push_back(Vector2f(event.mouseButton.x, event.mouseButton.y));
 			    }
 			    else if(points.size() == 0)
 			    {
-				///fourth click
-				///push back to points vector
+					///fourth click
+					///push back to points vector
+					points.push_back(Vector2f(event.mouseButton.x, event.mouseButton.y));
 			    }
 			}
 		    }
@@ -70,6 +89,13 @@ int main()
 		    ///select random vertex
 		    ///calculate midpoint between random vertex and the last point in the vector
 		    ///push back the newly generated coord.
+			for (int i = 0; i < 1000; i++)
+			{
+				int randomVertice = rand() % 3;
+				int randomX = (vertices[randomVertice].x + points.back().x) / 2;
+				int randomY = (vertices[randomVertice].y + points.back().y) / 2;
+				points.push_back(Vector2f(randomX, randomY));
+			}
 		}
 	
 		/*
@@ -78,14 +104,26 @@ int main()
 		****************************************
 		*/
 		window.clear();
-		for(int i = 0; i < vertices.size(); i++)
+
+		window.draw(text);
+
+		for(unsigned long int i = 0; i < vertices.size(); i++)
 		{
 		    RectangleShape rect(Vector2f(10,10));
 		    rect.setPosition(Vector2f(vertices[i].x, vertices[i].y));
-		    rect.setFillColor(Color::Blue);
+		    rect.setFillColor(Color::White);
 		    window.draw(rect);
+		}
+
+		for (unsigned long int i = 0; i < points.size(); i++)
+		{
+			RectangleShape dot(Vector2f(2,2));
+		    dot.setPosition(Vector2f(points[i].x, points[i].y));
+		    dot.setFillColor(Color::Yellow);
+		    window.draw(dot);
 		}
 		///TODO:  Draw points
 		window.display();
 	}
 }
+
